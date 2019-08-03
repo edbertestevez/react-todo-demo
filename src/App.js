@@ -86,7 +86,7 @@ class ToDoApp extends React.Component {
 
   render() {
 
-    if (!this.state.isLoggedIn) {
+    if (this.state.isLoggedIn) {
       return (
         <LoginForm handleLogin={this.handleLogin} loginError={this.state.loginError} />
       )
