@@ -1,5 +1,11 @@
 .App {
-  text-align: center;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  width: 60%;
+  margin: 50px auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .App-logo {
@@ -30,4 +36,54 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.todo-ul{
+  list-style-type: none;
+}
+
+.btn-save{
+  background: green;
+  color: white;
+}
+
+.btn-edit{
+  background: darkcyan;
+  color: white;
+}
+
+.btn-remove{
+  background: #eb4034;
+  color: white;
+}
+
+.btn-add{
+  background: #d68f00;
+  color: white;
+}
+
+.item{
+  width: 300px;
+  float: left;
+}
+
+.item-input{
+  width: 278px;
+  float: left;
+}
+
+input, button{
+  padding: 8px;
+  border-radius: 8px;
+  margin-right: 2px;
+}
+
+.separator{
+  border: 1px solid #cacaca;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.search{
+  margin-left: 140px;
 }
