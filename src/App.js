@@ -3,21 +3,35 @@ import './App.css';
 import ToDoList from './components/ToDoList';
 import AddForm from './components/AddForm';
 import axios from 'axios';
+import LoginForm from './components/LoginForm';
 
 class ToDoApp extends React.Component {
-
-  state = {
-    todos: [],
-    item: '',
-    editId: '',
-    editItem: '',
-    isFetching: true,
-    searchTodo: ''
+ 
+  constructor(props){
+    super();
+    this.state = {
+      todos: [],
+      item: '',
+      editId: '',
+      editItem: '',
+      isFetching: true,
+      searchTodo: '',
+      isLoggedIn: localStorage.getItem('isTodoLoggedIn') 
+    }
   }
 
 
   componentDidMount() {
     this.retrieveTodos();
+  }
+
+  handleLogin = (identifier, password) => {
+    axios.post("http://testreacttodoapp.herokuapp.com/auth/local", { identifier, password })
+      .then(() => {
+        this.setState({ isLoggedIn: true, loginError: '' });
+        localStorage.setItem('isTodoLoggedIn', true);
+      })
+      .catch(err => this.setState({ isLoggedIn: false, loginError: 'Incorrect username/password' }))
   }
 
   retrieveTodos() {
@@ -65,38 +79,54 @@ class ToDoApp extends React.Component {
     this.setState({ editId: '', editItem: '' });
   }
 
+  logout = () => {
+    this.setState({ isLoggedIn: false })
+    localStorage.setItem('isTodoLoggedIn', false);
+  }
+
   render() {
-    return (
-      <div className="App">
-        <h1>React Todo List</h1>
-        <AddForm
-          {...this.state}
-          handleInputChange={this.handleInputChange}
-          handleSubmit={this.handleSubmit}
-        />
-        <div className="separator" />
-        <br />
 
-        <div style={{ width: '100%' }} className="search" >
-          Search: {' '}
-          <input type="text" name="searchTodo" placeholder="Search to do. . ." onChange={this.handleInputChange} />
+    if (!this.state.isLoggedIn) {
+      return (
+        <LoginForm handleLogin={this.handleLogin} loginError={this.state.loginError} />
+      )
+    } else {
+      return (
+        <div className="App">
+          <div style={{ width: '100%' }}>
+            <button className="btn-logout" onClick={this.logout}>Logout</button>
+          </div>
+
+          <h1>React Todo List</h1>
+          <AddForm
+            {...this.state}
+            handleInputChange={this.handleInputChange}
+            handleSubmit={this.handleSubmit}
+          />
+          <div className="separator" />
+          <br />
+
+          <div style={{ width: '100%' }} className="search" >
+            Search: {' '}
+            <input type="text" name="searchTodo" placeholder="Search to do. . ." onChange={this.handleInputChange} />
+          </div>
+
+          {this.state.isFetching ? (
+            <p>Fetching todo list . . .</p>
+          ) : (
+              <ToDoList
+                {...this.state}
+                removeItem={this.removeItem}
+                renderEdit={this.renderEdit}
+                handleInputChange={this.handleInputChange}
+                handleUpdate={this.handleUpdate}
+                cancelUpdate={this.cancelUpdate}
+              />
+            )}
+
         </div>
-
-        {this.state.isFetching ? (
-          <p>Fetching todo list . . .</p>
-        ) : (
-            <ToDoList
-              {...this.state}
-              removeItem={this.removeItem}
-              renderEdit={this.renderEdit}
-              handleInputChange={this.handleInputChange}
-              handleUpdate={this.handleUpdate}
-              cancelUpdate={this.cancelUpdate}
-            />
-          )}
-
-      </div>
-    );
+      );
+    }
   }
 }
 
